@@ -12,22 +12,42 @@ import com.crm.spring.entity.Customer;
 @Repository
 public class CustomerDAO implements ICustomerDAO {
 
-	//DI 
+	// DI
 	@Autowired
 	private SessionFactory factory;
-	
+
 	@Override
-	@Transactional
 	public List<Customer> getCustomers() {
-		
-		Session session=factory.getCurrentSession();
-		
-		Query<Customer> query=
-				session.createQuery("from Customer",Customer.class);
-		
-		List<Customer> list=query.getResultList();
-		
+		Session session = factory.getCurrentSession();
+		Query<Customer> query = session.createQuery("from Customer order by lastName", Customer.class);
+		List<Customer> list = query.getResultList();
 		return list;
+	}
+
+	@Override
+	public void saveCustomer(Customer customer) {
+
+		Session session = factory.getCurrentSession();
+		session.saveOrUpdate(customer);
+	}
+
+	@Override
+	public Customer getCustomer(int id) {
+		Session session = factory.getCurrentSession();
+		
+		return session.get(Customer.class,id);
+	}
+
+	@Override
+	public void deleteCustomer(int id) {
+		Session session = factory.getCurrentSession();
+		
+		//Customer customer=session.get(Customer.class,id);
+		//session.delete(customer);
+		
+		Query<Customer> query=session.createQuery("delete from Customer where id=:customerId");
+		query.setParameter("customerId", id);
+		query.executeUpdate();
 	}
 
 }

@@ -6,26 +6,67 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
-import com.crm.spring.dao.ICustomerDAO;
 import com.crm.spring.entity.Customer;
+import com.crm.spring.service.ICustomerService;
 
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
 	
 	@Autowired
-	private ICustomerDAO customerDAO;
+	private ICustomerService customerService;
 	
-	@RequestMapping("/list")
+	@GetMapping("/list")
 	public String listCustomers(Model theModel) {
 		
-		List<Customer> customers=customerDAO.getCustomers();
+		List<Customer> customers=customerService.getCustomers();
 		
 		theModel.addAttribute("customers", customers);
 		
 		return "list-customer";
+	}
+	
+	@GetMapping("/showFormForAdd")
+	public String showFormForAdd(Model model) {
+		
+		Customer customer=new Customer();
+		
+		model.addAttribute("customer",customer);
+		
+		return "customer-form";
+	}
+	
+	@PostMapping("/saveCustomer")
+	private String saveCustomer(@ModelAttribute("customer") Customer customer) {
+		
+		customerService.saveCustomer(customer);
+		
+		return "redirect:/customer/list";
+	}
+	
+	@GetMapping("/showFormForUpdate")
+	private String showFormForUpdate(
+			@ModelAttribute("customerId") int id, Model model) {
+		
+		Customer customer=customerService.getCustomer(id);
+		
+		model.addAttribute("customer", customer);
+		
+		return "customer-form";
+	}
+	
+	@GetMapping("/deleteCustomer")
+	private String deleteCustomer(
+			@ModelAttribute("customerId") int id) {
+		
+		customerService.deleteCustomer(id);
+
+		return "redirect:/customer/list";
 	}
 }
