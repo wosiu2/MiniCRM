@@ -43,7 +43,7 @@ public class CustomerController {
 	}
 	
 	@PostMapping("/saveCustomer")
-	private String saveCustomer(@ModelAttribute("customer") Customer customer) {
+	public String saveCustomer(@ModelAttribute("customer") Customer customer) {
 		
 		customerService.saveCustomer(customer);
 		
@@ -51,7 +51,7 @@ public class CustomerController {
 	}
 	
 	@GetMapping("/showFormForUpdate")
-	private String showFormForUpdate(
+	public String showFormForUpdate(
 			@ModelAttribute("customerId") int id, Model model) {
 		
 		Customer customer=customerService.getCustomer(id);
@@ -62,7 +62,7 @@ public class CustomerController {
 	}
 	
 	@GetMapping("/deleteCustomer")
-	private String deleteCustomer(
+	public String deleteCustomer(
 			@ModelAttribute("customerId") int id) {
 		
 		customerService.deleteCustomer(id);
